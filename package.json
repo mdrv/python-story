@@ -4,12 +4,18 @@
 	"version": "0.0.1",
 	"type": "module",
 	"scripts": {
+		"b": "vite build",
+		"d": "vite dev",
+		"s": "vite preview",
+		"p": "vite preview",
+		"pr": "svelte-kit sync || echo ''",
 		"dev": "vite dev",
-		"build": "vite build",
+		"build": "panda codegen && vite build",
 		"preview": "vite preview",
 		"prepare": "svelte-kit sync || echo ''",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
-		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch"
+		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+		"codegen": "panda codegen"
 	},
 	"devDependencies": {
 		"@pandacss/config": "^1.8.1",
