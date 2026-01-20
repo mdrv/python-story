@@ -33,7 +33,7 @@
 	}
 
 	function goToStory() {
-		window.location.href = '/story'
+		window.location.href = '/chapters'
 	}
 
 	function goToHome() {
@@ -124,7 +124,7 @@
 		</section>
 
 		<section class="action-buttons">
-			<button class="btn btn-primary" on:click={goToStory}>Continue Story →</button>
+			<button class="btn btn-primary" on:click={goToStory}>Select Chapter →</button>
 		</section>
 	</main>
 </div>

@@ -18,21 +18,21 @@
 		if (displayName.trim()) {
 			const profile = createProfile(displayName.trim(), selectedAvatar)
 			loadProgress(profile.id)
-			window.location.href = '/story'
+			window.location.href = '/chapters'
 		}
 	}
 
 	function handleContinueAsGuest() {
 		const profile = createGuestProfile()
 		loadProgress(profile.id)
-		window.location.href = '/story'
+		window.location.href = '/chapters'
 	}
 
 	function selectProfile(profileId: string) {
 		const profile = profiles.find((p: any) => p.id === profileId)
 		if (profile) {
 			loadProgress(profile.id)
-			window.location.href = '/story'
+			window.location.href = '/chapters'
 		}
 	}
 

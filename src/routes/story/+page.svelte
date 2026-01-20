@@ -26,7 +26,9 @@
 		if (!user) {
 			window.location.href = '/'
 		} else {
-			setChapter('chapter-1')
+			const params = new URLSearchParams(window.location.search)
+			const chapterId = params.get('chapter') || 'chapter-1'
+			setChapter(chapterId)
 		}
 	})
 
@@ -67,6 +69,7 @@
 	<nav class="navbar">
 		<div class="nav-left">
 			<button class="nav-btn" on:click={handleBackToHome}>← Home</button>
+			<a href="/chapters" class="nav-link">📚 Chapters</a>
 			<a href="/progress" class="nav-link">📊 Progress</a>
 		</div>
 		<div class="user-info">
