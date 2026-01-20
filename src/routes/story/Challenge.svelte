@@ -27,6 +27,7 @@
 	let showSolution = $state(false)
 	let attempts = $state(0)
 	let pyodideLoading = $derived(isPyodideLoading())
+	let codePatternsMatch = $state(false)
 
 	let languageCompartment = new Compartment()
 
@@ -101,7 +102,18 @@
 		output = result.output
 		error = result.error || ''
 
-		if (!error && output.trim().length > 0) {
+		const expectedOutput = challenge.expectedOutput.trim()
+		const outputMatches = output.trim() === expectedOutput
+
+		// Check if all required patterns are present in the code
+		const patternsMatch = !challenge.requiredPatterns || challenge.requiredPatterns.every(pattern =>
+			code.includes(pattern)
+		)
+		codePatternsMatch = patternsMatch
+
+		const isCorrect = outputMatches && patternsMatch
+
+		if (isCorrect) {
 			attempts++
 			markExerciseComplete(challenge.problem, attempts, code)
 			updateConceptMastery(challenge.lesson, 25)
@@ -116,10 +128,6 @@
 			if (challenge.lesson === 'conditionals') {
 				unlockAchievement('first-conditional')
 			}
-
-			setTimeout(() => {
-				onComplete()
-			}, 1500)
 		}
 
 		isRunning = false
@@ -221,9 +229,22 @@
 			</div>
 		{/if}
 
-		{#if !error && output && output.trim().length > 0}
-			<div class="success-message">
-				🎉 <strong>Correct!</strong> Great job solving this challenge!
+		{#if !error && output}
+			<div class="success-message {output.trim() === challenge.expectedOutput.trim() && codePatternsMatch ? 'correct' : 'incorrect'}">
+				{#if output.trim() === challenge.expectedOutput.trim() && codePatternsMatch}
+					<div class="success-content">
+						<div>🎉 <strong>Correct!</strong> Great job solving this challenge!</div>
+						<button class="btn btn-continue" onclick={onComplete}>Continue →</button>
+					</div>
+				{:else}
+					<div>
+						{#if output.trim() !== challenge.expectedOutput.trim()}
+							⚠️ <strong>Not quite right.</strong> Your code ran, but the output doesn't match what we expected.
+						{:else if !codePatternsMatch}
+							⚠️ <strong>Not quite right.</strong> Your output is correct, but your code doesn't follow the required approach.
+						{/if}
+					</div>
+				{/if}
 			</div>
 		{/if}
 	</div>
@@ -416,13 +437,52 @@
 	}
 
 	.success-message {
-		background: #d1fae5;
 		padding: 1rem;
 		border-radius: 0.5rem;
-		color: #047857;
 		font-size: 1.1rem;
 		margin-top: 1rem;
 		animation: slideIn 0.3s ease-out;
+	}
+
+	.success-message.correct {
+		background: #d1fae5;
+		color: #047857;
+	}
+
+	.success-message.correct strong {
+		color: #065f46;
+	}
+
+	.success-message.incorrect {
+		background: #fef3c7;
+		color: #92400e;
+	}
+
+	.success-message.incorrect strong {
+		color: #78350f;
+	}
+
+	.success-content {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		gap: 1rem;
+	}
+
+	.btn-continue {
+		background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+		color: white;
+		padding: 0.5rem 1.5rem;
+		border: none;
+		border-radius: 0.5rem;
+		font-weight: 600;
+		cursor: pointer;
+		transition: all 0.2s;
+	}
+
+	.btn-continue:hover {
+		transform: translateY(-2px);
+		box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
 	}
 
 	.pyodide-status {

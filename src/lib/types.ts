@@ -17,6 +17,8 @@ export interface Challenge {
   problem: string
   lesson: string
   starterCode?: string
+  expectedOutput: string
+  requiredPatterns?: string[]
   solution: string
   hints: string[]
 }

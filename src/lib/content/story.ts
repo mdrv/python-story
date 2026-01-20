@@ -39,6 +39,7 @@ const STORY_DATA: Story = {
             problem: 'Help Zara display "Welcome to Python City!" on the screen',
             lesson: 'print-statement',
             starterCode: '# Write your code here\n',
+            expectedOutput: 'Welcome to Python City!',
             solution: 'print("Welcome to Python City!")',
             hints: [
               'Use the print() function to display text',
@@ -94,6 +95,8 @@ const STORY_DATA: Story = {
             problem: 'Help Byte store the number 5000 in a variable called population',
             lesson: 'variables',
             starterCode: '# Store 5000 in a variable named population\n',
+            expectedOutput: '5000',
+            requiredPatterns: ['population = 5000', 'print(population)'],
             solution: 'population = 5000\nprint(population)',
             hints: [
               'Use the = sign to assign a value to a variable',
@@ -118,6 +121,8 @@ const STORY_DATA: Story = {
             problem: 'Create a variable called city_name with the value "Python City" and print it',
             lesson: 'variables',
             starterCode: '# Create city_name variable\n',
+            expectedOutput: 'Python City',
+            requiredPatterns: ['city_name = ', 'print(city_name)'],
             solution: 'city_name = "Python City"\nprint(city_name)',
             hints: [
               'Remember to use quotes for text values',
@@ -170,6 +175,7 @@ const STORY_DATA: Story = {
             problem: 'Help Max print "Checking lamp" 5 times using a loop',
             lesson: 'for-loops',
             starterCode: '# Print "Checking lamp" 5 times\n',
+            expectedOutput: 'Checking lamp\nChecking lamp\nChecking lamp\nChecking lamp\nChecking lamp',
             solution: 'for i in range(5):\n    print("Checking lamp")',
             hints: [
               'Use a for loop with range()',
@@ -194,6 +200,7 @@ const STORY_DATA: Story = {
             problem: 'Help Max check each lamp by printing "Checking lamp X" where X is A, B, C, D, E',
             lesson: 'for-loops',
             starterCode: 'lamps = ["A", "B", "C", "D", "E"]\n# Print "Checking lamp X" for each lamp\n',
+            expectedOutput: 'Checking lamp A\nChecking lamp B\nChecking lamp C\nChecking lamp D\nChecking lamp E',
             solution: 'lamps = ["A", "B", "C", "D", "E"]\nfor lamp in lamps:\n    print("Checking lamp " + lamp)',
             hints: [
               'Use a for loop to go through each item in the list',
@@ -227,6 +234,7 @@ const STORY_DATA: Story = {
             problem: 'Write code that prints "Big building" if visitors > 100, else prints "Small building"',
             lesson: 'conditionals',
             starterCode: 'visitors = 150\n# Write your if/else statement here\n',
+            expectedOutput: 'Big building',
             solution: 'visitors = 150\nif visitors > 100:\n    print("Big building")\nelse:\n    print("Small building")',
             hints: [
               'Use the if statement with the condition visitors > 100',
@@ -251,6 +259,7 @@ const STORY_DATA: Story = {
             problem: 'Write code that prints "Child", "Adult", or "Senior" based on age using if, elif, and else',
             lesson: 'conditionals',
             starterCode: 'age = 25\n# Write your if/elif/else statement\n',
+            expectedOutput: 'Adult',
             solution: 'age = 25\nif age < 18:\n    print("Child")\nelif age < 65:\n    print("Adult")\nelse:\n    print("Senior")',
             hints: [
               'Start with if for the first condition',

@@ -20,15 +20,16 @@
 	})
 
 	$effect(() => {
-		if (!pyodideLoading && !pyodideError) {
-			// Pyodide loaded successfully
-			notificationMessage = '✅ Python environment ready!'
-			notificationType = 'success'
-			showNotification = true
-			setTimeout(() => {
-				showNotification = false
-			}, 3000)
-		} else if (pyodideError) {
+		// if (!pyodideLoading && !pyodideError) {
+		// 	// Pyodide loaded successfully
+		// 	notificationMessage = '✅ Python environment ready!'
+		// 	notificationType = 'success'
+		// 	showNotification = true
+		// 	setTimeout(() => {
+		// 		showNotification = false
+		// 	}, 3000)
+		// } else if (pyodideError) {
+		if (pyodideError) {
 			// Pyodide failed to load
 			notificationMessage = `❌ ${pyodideError}`
 			notificationType = 'error'
