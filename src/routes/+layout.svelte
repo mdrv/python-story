@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte'
-	import { getCurrentUser } from '$stores/user.svelte.ts'
-	import { initPyodide } from '$stores/pyodide.svelte.ts'
+	import { getCurrentUser } from '$stores/user.svelte'
+	import { initPyodide } from '$stores/pyodide.svelte'
 	import '../../app.css'
 
 	import favicon from '$lib/assets/favicon.svg'

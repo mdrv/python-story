@@ -102,6 +102,49 @@ const STORY_DATA: Story = {
             ]
           },
           requirements: ['variables']
+        },
+        {
+          id: 'scene-1-6',
+          chapterId: 'chapter-1',
+          text: '"Perfect! Now I need to store the city name too. Can you help me create a variable called city_name with the value "Python City"?"',
+          character: {
+            id: 'byte',
+            name: 'Byte',
+            avatar: '🤖',
+            personality: 'Logical and helpful'
+          },
+          challenge: {
+            type: 'exercise',
+            problem: 'Create a variable called city_name with the value "Python City" and print it',
+            lesson: 'variables',
+            starterCode: '# Create city_name variable\n',
+            solution: 'city_name = "Python City"\nprint(city_name)',
+            hints: [
+              'Remember to use quotes for text values',
+              'The variable name can use underscores',
+              'Print the variable to confirm it works'
+            ]
+          },
+          requirements: ['variables']
+        },
+        {
+          id: 'scene-1-7',
+          chapterId: 'chapter-1',
+          text: '"Excellent! You\'ve learned the basics of variables! Now Zara, Byte, and I want to thank you for helping us today. Come back tomorrow to learn about loops!"',
+          character: {
+            id: 'zara',
+            name: 'Zara',
+            avatar: '👧',
+            personality: 'Curious and friendly'
+          },
+          choices: [
+            {
+              id: 'choice-1-2',
+              text: 'I can\'t wait! See you tomorrow!',
+              targetSceneId: 'scene-2-1'
+            }
+          ],
+          requirements: []
         }
       ]
     },

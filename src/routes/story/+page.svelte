@@ -1,8 +1,21 @@
 <script lang="ts">
 	import { onMount } from 'svelte'
-	import { getCurrentUser } from '$stores/user.svelte.ts'
-	import { getStoryState, setChapter, setScene, getSceneState, goToNextScene } from '$stores/story.svelte.ts'
-	import { markSceneComplete } from '$stores/progress.svelte.ts'
+	import { getCurrentUser } from '$stores/user.svelte'
+	import {
+		getStoryState,
+		setChapter,
+		setScene,
+		getSceneState,
+		goToNextScene,
+		getChapterState
+	} from '$stores/story.svelte'
+	import {
+		markSceneComplete,
+		markChapterComplete,
+		getProgress,
+		loadProgress
+	} from '$stores/progress.svelte'
+	import Challenge from './Challenge.svelte'
 
 	let user = getCurrentUser()
 	let story = getStoryState()
@@ -20,7 +33,7 @@
 	$: currentScene = getSceneState()
 
 	function handleChoice(choiceId: string) {
-		const choice = currentScene?.choices?.find((c) => c.id === choiceId)
+		const choice = currentScene?.choices?.find((c: any) => c.id === choiceId)
 		if (choice) {
 			setScene(choice.targetSceneId)
 			markSceneComplete(currentScene?.id || '')
@@ -34,7 +47,15 @@
 
 	function handleContinue() {
 		markSceneComplete(currentScene?.id || '')
-		goToNextScene()
+
+		const nextScene = goToNextScene()
+		if (!nextScene) {
+			const chapter = getChapterState()
+			if (chapter) {
+				markChapterComplete(chapter.id)
+				alert(`🎉 Congratulations! You completed Chapter ${chapter.order}: ${chapter.title}!`)
+			}
+		}
 	}
 
 	function handleBackToHome() {
@@ -44,7 +65,10 @@
 
 <div class="story-container">
 	<nav class="navbar">
-		<button class="nav-btn" on:click={handleBackToHome}>← Home</button>
+		<div class="nav-left">
+			<button class="nav-btn" on:click={handleBackToHome}>← Home</button>
+			<a href="/progress" class="nav-link">📊 Progress</a>
+		</div>
 		<div class="user-info">
 			<span class="user-avatar">{user?.avatar}</span>
 			<span class="user-name">{user?.displayName}</span>
@@ -117,17 +141,26 @@
 		backdrop-filter: blur(10px);
 	}
 
-	.nav-btn {
+	.nav-left {
+		display: flex;
+		align-items: center;
+		gap: 1rem;
+	}
+
+	.nav-btn,
+	.nav-link {
 		padding: 0.5rem 1rem;
 		background: white;
 		border: none;
 		border-radius: 0.5rem;
-		cursor: pointer;
 		font-weight: 600;
 		transition: all 0.2s;
+		text-decoration: none;
+		color: #333;
 	}
 
-	.nav-btn:hover {
+	.nav-btn:hover,
+	.nav-link:hover {
 		background: #f8f9ff;
 	}
 

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte'
-	import { createProfile, createGuestProfile, getAvatars, getProfiles } from '$stores/user.svelte.ts'
-	import { loadProgress } from '$stores/progress.svelte.ts'
+	import { createProfile, createGuestProfile, getAvatars, getProfiles } from '$stores/user.svelte'
+	import { loadProgress } from '$stores/progress.svelte'
 
 	let displayName = ''
 	let selectedAvatar = ''
@@ -29,7 +29,7 @@
 	}
 
 	function selectProfile(profileId: string) {
-		const profile = profiles.find((p) => p.id === profileId)
+		const profile = profiles.find((p: any) => p.id === profileId)
 		if (profile) {
 			loadProgress(profile.id)
 			window.location.href = '/story'
@@ -55,7 +55,10 @@
 				{#each profiles as profile}
 					<button class="profile-card" on:click={() => selectProfile(profile.id)}>
 						<span class="profile-avatar">{profile.avatar}</span>
-						<span class="profile-name">{profile.displayName}</span>
+						<div class="profile-details">
+							<span class="profile-name">{profile.displayName}</span>
+							<a href="/progress" class="view-progress">View Progress →</a>
+						</div>
 					</button>
 				{/each}
 			</div>
@@ -172,6 +175,7 @@
 		background: white;
 		cursor: pointer;
 		transition: all 0.2s;
+		text-decoration: none;
 	}
 
 	.profile-card:hover {
@@ -183,10 +187,29 @@
 		font-size: 2rem;
 	}
 
+	.profile-details {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 0.25rem;
+	}
+
 	.profile-name {
 		font-size: 1.1rem;
 		font-weight: 600;
 		color: #333;
+	}
+
+	.view-progress {
+		color: #667eea;
+		font-size: 0.9rem;
+		text-decoration: none;
+		font-weight: 500;
+	}
+
+	.view-progress:hover {
+		text-decoration: underline;
 	}
 
 	.form-group {

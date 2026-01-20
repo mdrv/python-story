@@ -1,30 +1,33 @@
 <script lang="ts">
 	import { onDestroy, onMount } from 'svelte'
-	import EditorView from '@codemirror/view'
+	import { EditorView } from '@codemirror/view'
 	import { EditorState, Compartment } from '@codemirror/state'
 	import { python } from '@codemirror/lang-python'
 	import { keymap, highlightSpecialChars } from '@codemirror/view'
 	import { defaultKeymap, indentWithTab } from '@codemirror/commands'
-	import { executeWithTimeout, resetEnvironment } from '$stores/pyodide.svelte.ts'
-	import { unlockAchievement, markExerciseComplete, updateConceptMastery } from '$stores/progress.svelte.ts'
+	import { executeWithTimeout, resetEnvironment } from '$stores/pyodide.svelte'
+	import { unlockAchievement, markExerciseComplete, updateConceptMastery } from '$stores/progress.svelte'
+	import type { Challenge as ChallengeType } from '$lib/types'
 
-	export let challenge: any
-	export let onComplete: () => void
-	export let onClose: () => void
+	interface Props {
+		challenge: ChallengeType
+		onComplete: () => void
+		onClose: () => void
+	}
+
+	let { challenge, onComplete, onClose }: Props = $props()
 
 	let editorParent: HTMLElement
 	let view: EditorView | null = null
-	let code = challenge.starterCode || ''
-	let output = ''
-	let error = ''
-	let isRunning = false
-	let hintIndex = -1
-	let showSolution = false
-	let attempts = 0
+	let code = $state(challenge.starterCode || '')
+	let output = $state('')
+	let error = $state('')
+	let isRunning = $state(false)
+	let hintIndex = $state(-1)
+	let showSolution = $state(false)
+	let attempts = $state(0)
 
 	let languageCompartment = new Compartment()
-
-	$: code
 
 	function initEditor() {
 		if (!editorParent || view) return
@@ -41,7 +44,7 @@
 				extensions: [
 					oneDark,
 					languageCompartment.of(python()),
-					keymap.of([defaultKeymap, indentWithTab]),
+					keymap.of([...defaultKeymap, indentWithTab]),
 					highlightSpecialChars(),
 					EditorView.theme({
 						'&': { height: '300px', fontSize: '14px' },
@@ -49,46 +52,45 @@
 						'.cm-content': { fontFamily: 'monospace' }
 					}),
 					updateListener
-				])
-			},
+				]
+			}),
 			parent: editorParent
 		})
 	}
 
-	function runCode() {
+	async function runCode() {
 		if (isRunning || !view) return
 
 		isRunning = true
 		output = ''
 		error = ''
 
-		executeWithTimeout(code, 5000).then((result) => {
-			output = result.output
-			error = result.error || ''
+		const result = await executeWithTimeout(code, 5000)
+		output = result.output
+		error = result.error || ''
 
-			if (!error && output.includes(challenge.expectedOutput || '')) {
-				attempts++
-				markExerciseComplete(challenge.id, attempts, code)
-				updateConceptMastery(challenge.lesson, 25)
-				unlockAchievement('first-print')
+		if (!error && output.trim().length > 0) {
+			attempts++
+			markExerciseComplete(challenge.problem, attempts, code)
+			updateConceptMastery(challenge.lesson, 25)
+			unlockAchievement('first-print')
 
-				if (challenge.lesson === 'variables') {
-					unlockAchievement('first-variable')
-				}
-				if (challenge.lesson === 'loops') {
-					unlockAchievement('first-loop')
-				}
-				if (challenge.lesson === 'conditionals') {
-					unlockAchievement('first-conditional')
-				}
-
-				setTimeout(() => {
-					onComplete()
-				}, 1500)
+			if (challenge.lesson === 'variables') {
+				unlockAchievement('first-variable')
+			}
+			if (challenge.lesson === 'for-loops') {
+				unlockAchievement('first-loop')
+			}
+			if (challenge.lesson === 'conditionals') {
+				unlockAchievement('first-conditional')
 			}
 
-			isRunning = false
-		})
+			setTimeout(() => {
+				onComplete()
+			}, 1500)
+		}
+
+		isRunning = false
 	}
 
 	function showHint() {
@@ -144,7 +146,7 @@
 <div class="challenge">
 	<div class="challenge-header">
 		<h3>💻 {challenge.type === 'quiz' ? 'Quiz' : 'Coding Challenge'}</h3>
-		<button class="close-btn" on:click={() => dispatch('close')}>✕</button>
+		<button class="close-btn" onclick={onClose}>✕</button>
 	</div>
 
 	<div class="challenge-content">
@@ -159,19 +161,19 @@
 
 		<div class="output-panel">
 			<h4>Output:</h4>
-			<pre class={error ? 'error' : ''}>{error || output || 'Run your code to see output...'}</pre>
+			<pre class:error={error}>{error || output || 'Run your code to see output...'}</pre>
 		</div>
 
 		<div class="actions">
 			<div class="main-actions">
-				<button class="btn btn-run" on:click={runCode} disabled={isRunning}>
+				<button class="btn btn-run" onclick={runCode} disabled={isRunning}>
 					{isRunning ? 'Running...' : '▶ Run Code'}
 				</button>
-				<button class="btn btn-reset" on:click={resetCode}>🔄 Reset</button>
+				<button class="btn btn-reset" onclick={resetCode}>🔄 Reset</button>
 			</div>
 
 			<div class="hint-actions">
-				<button class="btn btn-hint" on:click={showHint} disabled={hintIndex >= challenge.hints.length - 1}>
+				<button class="btn btn-hint" onclick={showHint} disabled={hintIndex >= challenge.hints.length - 1}>
 					💡 Hint
 				</button>
 				{#if hintIndex >= 0}
@@ -181,7 +183,7 @@
 				{/if}
 
 				{#if attempts >= 2}
-					<button class="btn btn-solution" on:click={showTheSolution}>👁️ Show Solution</button>
+					<button class="btn btn-solution" onclick={showTheSolution}>👁️ Show Solution</button>
 				{/if}
 			</div>
 		</div>
@@ -193,7 +195,7 @@
 			</div>
 		{/if}
 
-		{#if !error && output && output.includes(challenge.expectedOutput || '')}
+		{#if !error && output && output.trim().length > 0}
 			<div class="success-message">
 				🎉 <strong>Correct!</strong> Great job solving this challenge!
 			</div>

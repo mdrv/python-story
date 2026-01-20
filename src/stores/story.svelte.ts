@@ -60,7 +60,7 @@ export function resetStory(): void {
 export function getNextScene(): Scene | null {
   if (!currentChapter || !currentScene) return null
 
-  const currentIndex = currentChapter.scenes.findIndex((s) => s.id === currentScene.id)
+  const currentIndex = currentChapter.scenes.findIndex((s) => s.id === currentScene?.id)
   if (currentIndex < currentChapter.scenes.length - 1) {
     return currentChapter.scenes[currentIndex + 1]
   }

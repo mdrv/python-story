@@ -1,38 +1,73 @@
-# sv
+# Python Story
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+A web-based Python learning platform for children that teaches programming through interactive storytelling.
 
-## Creating a project
+## Features
 
-If you're seeing this, you've probably already done this step. Congrats!
+- **Interactive Storytelling**: Follow characters through a narrative adventure
+- **Hands-on Coding**: Write real Python code in a browser-based editor
+- **Progress Tracking**: Earn achievements and badges as you learn
+- **Child-Friendly UI**: Designed for ages 8-14 with engaging visuals
 
-```sh
-# create a new project in the current directory
-npx sv create
+## Getting Started
 
-# create a new project in my-app
-npx sv create my-app
+1. Clone the repository:
+```bash
+git clone https://github.com/mdrv/python-story.git
+cd python-story
 ```
 
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```sh
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
+2. Install dependencies:
+```bash
+bun install
 ```
 
-## Building
-
-To create a production version of your app:
-
-```sh
-npm run build
+3. Generate CSS:
+```bash
+bun run codegen
 ```
 
-You can preview the production build with `npm run preview`.
+4. Start the development server:
+```bash
+bun run dev
+```
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+5. Open http://localhost:5173 in your browser
+
+## Tech Stack
+
+- **Framework**: SvelteKit with Svelte 5 (runes)
+- **Language**: TypeScript
+- **Runtime**: Bun
+- **Styling**: Panda CSS
+- **Code Editor**: CodeMirror 6
+- **Python Runtime**: Pyodide (WebAssembly)
+
+## Project Structure
+
+```
+src/
+├── lib/
+│   ├── content/          # Story data, lessons, achievements
+│   ├── types.ts          # TypeScript interfaces
+│   └── assets/           # Static assets
+├── routes/               # SvelteKit routes
+│   ├── story/           # Story viewer
+│   ├── progress/         # Progress dashboard
+│   └── +page.svelte     # Home/profile selection
+├── stores/              # Svelte 5 stores (.svelte.ts)
+│   ├── story.svelte.ts
+│   ├── user.svelte.ts
+│   ├── progress.svelte.ts
+│   └── pyodide.svelte.ts
+└── app.css              # Panda CSS entry point
+```
+
+## Contributing
+
+This is an educational project. Feel free to fork and create your own Python stories!
+
+## License
+
+MIT License - feel free to use this for educational purposes.
+
