@@ -4,19 +4,16 @@
 	import { getProgress, getCompletionPercentage, getUnlockedAchievements } from '$stores/progress.svelte'
 	import { getStoryState } from '$stores/story.svelte'
 
-	let user = getCurrentUser()
-	let progress = getProgress()
+	let user = $derived(getCurrentUser())
+	let progress = $derived(getProgress())
 	let story = getStoryState()
-	let unlockedAchievements = getUnlockedAchievements()
+	let unlockedAchievements = $derived(getUnlockedAchievements())
 
 	onMount(() => {
 		if (!user) {
 			window.location.href = '/'
 		}
 	})
-
-	$: progress = getProgress()
-	$: unlockedAchievements = getUnlockedAchievements()
 
 	function formatTime(seconds: number): string {
 		const hours = Math.floor(seconds / 3600)

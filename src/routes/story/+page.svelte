@@ -17,10 +17,10 @@
 	} from '$stores/progress.svelte'
 	import Challenge from './Challenge.svelte'
 
-	let user = getCurrentUser()
+	let user = $derived(getCurrentUser())
 	let story = getStoryState()
-	let currentScene = getSceneState()
-	let showChallenge = false
+	let currentScene = $derived(getSceneState())
+	let showChallenge = $state(false)
 
 	onMount(() => {
 		if (!user) {
@@ -31,8 +31,6 @@
 			setChapter(chapterId)
 		}
 	})
-
-	$: currentScene = getSceneState()
 
 	function handleChoice(choiceId: string) {
 		const choice = currentScene?.choices?.find((c: any) => c.id === choiceId)

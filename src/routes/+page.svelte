@@ -1,14 +1,14 @@
 <script lang="ts">
 	import { onMount } from 'svelte'
-	import { createProfile, createGuestProfile, getAvatars, getProfiles } from '$stores/user.svelte'
+	import { createProfile, createGuestProfile, getAvatars, getProfiles, setCurrentUser } from '$stores/user.svelte'
 	import { loadProgress } from '$stores/progress.svelte'
 
-	let displayName = ''
-	let selectedAvatar = ''
-	let showAvatarPicker = false
+	let displayName = $state('')
+	let selectedAvatar = $state('')
+	let showAvatarPicker = $state(false)
 
 	let avatars = getAvatars()
-	let profiles = getProfiles()
+	let profiles = $derived(getProfiles())
 
 	onMount(() => {
 		selectedAvatar = avatars[0]
@@ -31,6 +31,7 @@
 	function selectProfile(profileId: string) {
 		const profile = profiles.find((p: any) => p.id === profileId)
 		if (profile) {
+			setCurrentUser(profile)
 			loadProgress(profile.id)
 			window.location.href = '/chapters'
 		}

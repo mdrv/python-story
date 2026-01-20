@@ -4,17 +4,16 @@
 	import { getStoryState } from '$stores/story.svelte'
 	import { getProgress } from '$stores/progress.svelte'
 
-	let user = getCurrentUser()
 	let story = getStoryState()
-	let progress = getProgress()
+
+	let user = $derived(getCurrentUser())
+	let progress = $derived(getProgress())
 
 	onMount(() => {
 		if (!user) {
 			window.location.href = '/'
 		}
 	})
-
-	$: progress = getProgress()
 
 	function selectChapter(chapterId: string) {
 		window.location.href = `/story?chapter=${chapterId}`

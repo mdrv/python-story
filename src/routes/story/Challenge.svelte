@@ -1,13 +1,13 @@
 <script lang="ts">
 	import { onDestroy, onMount } from 'svelte'
-	import { EditorView } from '@codemirror/view'
+	import { EditorView, lineNumbers, highlightActiveLine, highlightActiveLineGutter } from '@codemirror/view'
 	import { EditorState, Compartment } from '@codemirror/state'
 	import { python } from '@codemirror/lang-python'
 	import { keymap, highlightSpecialChars } from '@codemirror/view'
 	import { defaultKeymap, indentWithTab } from '@codemirror/commands'
-	import { executeWithTimeout, resetEnvironment } from '$stores/pyodide.svelte'
+	import { executeWithTimeout, resetEnvironment, isPyodideLoading } from '$stores/pyodide.svelte'
 	import { unlockAchievement, markExerciseComplete, updateConceptMastery } from '$stores/progress.svelte'
-	import type { Challenge as ChallengeType } from '$lib/types'
+	import type { Challenge as ChallengeType } from '$lib/types.ts'
 
 	interface Props {
 		challenge: ChallengeType
@@ -26,8 +26,32 @@
 	let hintIndex = $state(-1)
 	let showSolution = $state(false)
 	let attempts = $state(0)
+	let pyodideLoading = $derived(isPyodideLoading())
 
 	let languageCompartment = new Compartment()
+
+	const oneDark = EditorView.theme({
+		'&': {
+			backgroundColor: '#1e1e1e',
+			color: '#d4d4d4'
+		},
+		'.cm-content': {
+			caretColor: '#ffffff'
+		},
+		'.cm-cursor, .cm-dropCursor': {
+			borderLeftColor: '#ffffff'
+		},
+		'.cm-gutters': {
+			backgroundColor: '#252526',
+			border: 'none'
+		},
+		'.cm-activeLine': {
+			backgroundColor: '#2a2a2b'
+		},
+		'.cm-activeLineGutter': {
+			backgroundColor: '#2a2a2b'
+		}
+	})
 
 	function initEditor() {
 		if (!editorParent || view) return
@@ -43,6 +67,9 @@
 				doc: code,
 				extensions: [
 					oneDark,
+					lineNumbers(),
+					highlightActiveLine(),
+					highlightActiveLineGutter(),
 					languageCompartment.of(python()),
 					keymap.of([...defaultKeymap, indentWithTab]),
 					highlightSpecialChars(),
@@ -60,6 +87,11 @@
 
 	async function runCode() {
 		if (isRunning || !view) return
+
+		if (pyodideLoading) {
+			error = 'Python environment is still loading, please wait...'
+			return
+		}
 
 		isRunning = true
 		output = ''
@@ -125,22 +157,6 @@
 		if (view) view.destroy()
 	})
 
-	const oneDark = EditorView.theme({
-		'&': {
-			backgroundColor: '#1e1e1e',
-			color: '#d4d4d4'
-		},
-		'.cm-gutters': {
-			backgroundColor: '#252526',
-			border: 'none'
-		},
-		'.cm-activeLine': {
-			backgroundColor: '#2a2a2b'
-		},
-		'.cm-activeLineGutter': {
-			backgroundColor: '#2a2a2b'
-		}
-	})
 </script>
 
 <div class="challenge">
@@ -166,10 +182,20 @@
 
 		<div class="actions">
 			<div class="main-actions">
-				<button class="btn btn-run" onclick={runCode} disabled={isRunning}>
+				<button class="btn btn-run" onclick={runCode} disabled={isRunning || pyodideLoading}>
 					{isRunning ? 'Running...' : '▶ Run Code'}
 				</button>
 				<button class="btn btn-reset" onclick={resetCode}>🔄 Reset</button>
+				{#if pyodideLoading}
+					<div class="pyodide-status loading">
+						<span class="spinner"></span>
+						<span>Loading Python...</span>
+					</div>
+				{:else}
+					<div class="pyodide-status ready">
+						✅ Python Ready
+					</div>
+				{/if}
 			</div>
 
 			<div class="hint-actions">
@@ -397,6 +423,43 @@
 		font-size: 1.1rem;
 		margin-top: 1rem;
 		animation: slideIn 0.3s ease-out;
+	}
+
+	.pyodide-status {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		padding: 0.75rem 1rem;
+		border-radius: 0.5rem;
+		font-size: 0.9rem;
+		font-weight: 600;
+		white-space: nowrap;
+	}
+
+	.pyodide-status.loading {
+		background: #fef3c7;
+		color: #92400e;
+	}
+
+	.pyodide-status.ready {
+		background: #d1fae5;
+		color: #047857;
+	}
+
+	.spinner {
+		display: inline-block;
+		width: 14px;
+		height: 14px;
+		border: 2px solid #92400e;
+		border-radius: 50%;
+		border-top-color: transparent;
+		animation: spin 1s linear infinite;
+	}
+
+	@keyframes spin {
+		to {
+			transform: rotate(360deg);
+		}
 	}
 
 	@keyframes slideIn {

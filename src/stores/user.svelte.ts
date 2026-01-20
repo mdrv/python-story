@@ -5,7 +5,7 @@ let profiles = $state<UserProfile[]>([])
 
 const AVATARS = ['👦', '👧', '🧑', '👨', '👩', '🧒', '👶', '🦸', '🦸‍♀️', '🧙', '🧙‍♀️']
 
-export function getCurrentUser(): UserProfile | null {
+export function getCurrentUser() {
   return currentUser
 }
 
@@ -13,6 +13,7 @@ export function setCurrentUser(user: UserProfile | null): void {
   currentUser = user
   if (user) {
     saveProfiles()
+    saveCurrentUser()
   }
 }
 
@@ -27,6 +28,7 @@ export function createProfile(displayName: string, avatar: string): UserProfile 
     isGuest: false
   }
   profiles.push(profile)
+  currentUser = profile
   saveProfiles()
   return profile
 }
@@ -74,11 +76,25 @@ function saveProfiles(): void {
   }
 }
 
+function saveCurrentUser(): void {
+  if (typeof window !== 'undefined') {
+    if (currentUser) {
+      localStorage.setItem('currentUser', JSON.stringify(currentUser))
+    } else {
+      localStorage.removeItem('currentUser')
+    }
+  }
+}
+
 function loadProfiles(): void {
   if (typeof window !== 'undefined') {
     const saved = localStorage.getItem('profiles')
     if (saved) {
       profiles = JSON.parse(saved)
+    }
+    const savedUser = localStorage.getItem('currentUser')
+    if (savedUser) {
+      currentUser = JSON.parse(savedUser)
     }
   }
 }
